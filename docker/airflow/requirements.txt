@@ -1,0 +1,5 @@
+requests
+apache-airflow-providers-common-sql
+apache-airflow-providers-http
+apache-airflow-providers-postgres
+flask_appbuilder

@@ -1,0 +1,7 @@
+mlflow
+python-dotenv
+transformers==4.38.2
+torch
+torchvision
+psycopg2-binary
+
