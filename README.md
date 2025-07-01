@@ -33,9 +33,22 @@ The system is built with a microservices architecture, containerized using Docke
 -   **Orchestration**: **Apache Airflow** is used for orchestrating the data fetching and monitoring/retraining pipelines.
 -   **Containerization**: **Docker** and **Docker Compose** are used to build, run, and manage the services.
 
+## Reddit API Integration
+
+The Data Fetcher service uses the **PRAW (Python Reddit API Wrapper)** library to connect to the Reddit API and retrieve posts from specified subreddits.
+
+To use this service, you must register your own "script" application on Reddit:
+
+1.  Go to [https://www.reddit.com/prefs/apps/](https://www.reddit.com/prefs/apps/).
+2.  Click "are you a developer? create an app...".
+3.  Fill out the form, selecting "script" as the application type.
+4.  Once created, you will get a **client ID** (under your app name) and a **client secret**.
+
+These credentials must be added to your `.env` file as `REDDIT_CLIENT_ID` and `REDDIT_CLIENT_SECRET`.
+
 ## Initial Model
 
-The initial classification model is a fine-tuned version of `bert-lite`. The training process is documented in the `scripts/train-bert-lite.ipynb` notebook. The resulting model artifacts are stored in the `data/initial-model/` directory.
+The initial classification model is a fine-tuned version of `bert-lite`. It was trained on the `ucberkeley-dlab/measuring-hate-speech` dataset. The training process is documented in the `scripts/train-bert-lite.ipynb` notebook. The resulting model artifacts are stored in the `data/initial-model/` directory.
 
 ## Project Structure
 
