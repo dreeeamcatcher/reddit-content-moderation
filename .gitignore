@@ -1,5 +1,6 @@
 .github
 .env
+.DS_Store
 
 logs
 mlartifacts
