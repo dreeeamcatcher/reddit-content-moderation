@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from math import log
 from typing import List, Optional
+from zoneinfo import ZoneInfo
 import mlflow
 import logging
 import sys
@@ -34,15 +35,16 @@ class RetrainerService:
         self.fetcher_repository = fetcher_repository
         self.labelled_post_content_repository = labelled_post_content_repository
         self.llm_client = genai.Client(api_key=settings.LLM_API_KEY)
+        self.kyiv_tz = ZoneInfo("Europe/Kyiv")
 
 
     def get_current_date_original_posts(self):
-        today = datetime.now().date()
+        today = datetime.now(self.kyiv_tz).date()
         logger.info(f"Fetching original posts for date: {today}")
         return self.fetcher_repository.get_posts_for_n_days(start_date=today, n_days=1)
 
     def get_current_date_labelled_posts(self):
-        today = datetime.now().date()
+        today = datetime.now(self.kyiv_tz).date()
         return self.labelled_post_content_repository.get_labelled_posts_for_n_days(start_date=today, n_days=1)
 
     def get_labelled_posts(self, start_date: Optional[str], end_date: Optional[str]) -> List[LabelledPostContent]:
@@ -70,7 +72,7 @@ class RetrainerService:
                     text=post.text,
                     label=post_label,
                     text_type='post',
-                    created_utc=datetime.now(timezone.utc)
+                    created_utc=datetime.now(self.kyiv_tz)
                 )
                 created_post = self.labelled_post_content_repository.create(labelled_post_to_create)
                 labelled_contents.append(created_post)
@@ -86,7 +88,7 @@ class RetrainerService:
                         text=comment_text,
                         label=comment_label,
                         text_type='comment',
-                        created_utc=datetime.now(timezone.utc)
+                        created_utc=datetime.now(self.kyiv_tz)
                     )
                     created_comment = self.labelled_post_content_repository.create(labelled_comment_to_create)
                     labelled_contents.append(created_comment)
@@ -120,7 +122,7 @@ class RetrainerService:
         mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
 
         # 1. Fetch newly labeled data
-        today = datetime.now().date()
+        today = datetime.now(self.kyiv_tz).date()
         labelled_contents = self.labelled_post_content_repository.get_labelled_posts_for_n_days(start_date=today, n_days=1)
         if len(labelled_contents) < 100: # Minimum data for training
             logger.info("Not enough new data to retrain.")

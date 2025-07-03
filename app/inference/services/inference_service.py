@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import sys
+from zoneinfo import ZoneInfo
 import httpx
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
@@ -34,6 +35,7 @@ class InferenceService:
         self.unprocessed_post_repo = RedditPostRepository(db)
         self.prediction_repo = PredictionRepository(db)
         self.reddit_service = reddit_service
+        self.kyiv_tz = ZoneInfo("Europe/Kyiv")
         self._load_model_components_from_state()
 
     def _load_model_components_from_state(self):
@@ -131,7 +133,8 @@ class InferenceService:
                         label=classification_result['label'],
                         confidence_score=classification_result['confidence_score'],
                         model_version=self.model_version,
-                        prediction_timestamp=datetime.now(timezone.utc)
+                        
+                        prediction_timestamp=datetime.now(self.kyiv_tz)
                     )
                     db_prediction = self.prediction_repo.create_prediction(prediction_data)
                     created_predictions_db.append(PredictionSchema.model_validate(db_prediction))
@@ -152,7 +155,7 @@ class InferenceService:
                                 label=comment_classification_result['label'],
                                 confidence_score=comment_classification_result['confidence_score'],
                                 model_version=self.model_version,
-                                prediction_timestamp=datetime.now(timezone.utc)
+                                prediction_timestamp=datetime.now(self.kyiv_tz)
                             )
                             db_prediction = self.prediction_repo.create_prediction(prediction_data)
                             created_predictions_db.append(PredictionSchema.model_validate(db_prediction))
