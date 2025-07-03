@@ -57,7 +57,7 @@ with DAG(
         endpoint="/retrainer/label-posts",
         method="POST",
         log_response=True,
-        extra_options={'timeout': 600}, # Increased timeout for labeling posts
+        extra_options={'timeout': 1800}, # Increased timeout for labeling posts
     )
 
     retrain_task = HttpOperator(
@@ -66,7 +66,7 @@ with DAG(
         endpoint="/retrainer/retrain-and-evaluate",
         method="POST",
         log_response=True,
-        extra_options={'timeout': 600}, # Increased timeout for retraining
+        extra_options={'timeout': 1800}, # Increased timeout for retraining
     )
 
     stop_pipeline = EmptyOperator(task_id='stop_pipeline')
