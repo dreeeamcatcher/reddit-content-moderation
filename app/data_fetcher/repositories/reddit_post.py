@@ -42,7 +42,7 @@ class RedditPostRepository:
             self.db.refresh(db_post)
         return db_post
 
-    def get_posts_with_filter(self, processed_status: str = "all", start_date: Optional[datetime] = None, end_date: Optional[datetime] = None) -> List[RedditPost]:
+    def get_filtered_posts(self, processed_status: str = "all", start_date: Optional[datetime] = None, end_date: Optional[datetime] = None) -> List[RedditPost]:
         query = self.db.query(RedditPost)
         if processed_status == "processed":
             query = query.filter(RedditPost.is_processed == True)

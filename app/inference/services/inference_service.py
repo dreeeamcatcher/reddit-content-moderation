@@ -20,7 +20,7 @@ from app.core.config import settings
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout)
     ]
@@ -166,3 +166,15 @@ class InferenceService:
     def get_predictions_for_post(self, post_id: str) -> List[PredictionSchema]:
         db_predictions = self.prediction_repo.get_predictions_by_post_id(post_id)
         return [PredictionSchema.model_validate(p) for p in db_predictions]
+    
+    def get_filtered_predictions(self, label, confidence_min, confidence_max, start_date, end_date):
+        logger.info(
+        f"Fetching predictions with filters: label='{label}', "
+        f"confidence_min={confidence_min}, confidence_max={confidence_max}, "
+        f"start_date={start_date}, end_date={end_date}"
+    )
+        confidence_min = float(confidence_min) if confidence_min is not None else None
+        confidence_max = float(confidence_max) if confidence_max is not None else None
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d") if start_date else None
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
+        return self.prediction_repo.get_filtered_predictions(label, confidence_min, confidence_max, start_date_obj, end_date_obj)

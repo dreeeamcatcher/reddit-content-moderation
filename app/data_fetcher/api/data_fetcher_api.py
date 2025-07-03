@@ -70,20 +70,16 @@ async def view_posts_ui(
     processed_status: str = Query("all", enum=["all", "processed", "unprocessed"]),
     start_date: str = Query(None),
     end_date: str = Query(None),
-    db: Session = Depends(get_db)
+    service: RedditService = Depends(get_reddit_service),
 ):
     '''
     UI endpoint to view posts with filtering.
     '''
-    post_repo = RedditPostRepository(db)
 
-    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d") if start_date else None
-    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
-
-    posts = post_repo.get_posts_with_filter(
+    posts = service.get_filtered_posts(
         processed_status=processed_status, 
-        start_date=start_date_obj, 
-        end_date=end_date_obj
+        start_date=start_date, 
+        end_date=end_date
     )
     return templates.TemplateResponse(
         "posts_view.html",

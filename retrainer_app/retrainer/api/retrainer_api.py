@@ -33,10 +33,8 @@ def view_labelled_posts(
     end_date: Optional[str] = Query(None),
     service: RetrainerService = Depends(get_retrainer_service)
 ):
-    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d") if start_date else None
-    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
 
-    posts = service.get_labelled_posts(start_date=start_date_obj, end_date=end_date_obj)
+    posts = service.get_labelled_posts(start_date=start_date, end_date=end_date)
     return templates.TemplateResponse(
         "labelled_posts_view.html", 
         {

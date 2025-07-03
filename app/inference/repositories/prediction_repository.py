@@ -18,7 +18,7 @@ class PredictionRepository:
     def get_predictions_by_post_id(self, post_id: str) -> List[Prediction]:
         return self.db.query(Prediction).filter(Prediction.post_id == post_id).all()
 
-    def get_predictions_with_filters(
+    def get_filtered_predictions(
         self,
         label: Optional[str] = None,
         confidence_min: Optional[float] = None,
@@ -29,9 +29,9 @@ class PredictionRepository:
         query = self.db.query(Prediction)
         if label:
             query = query.filter(Prediction.label.ilike(f"%{label}%")) # Case-insensitive partial match, could be better with exact match from dictionary
-        if confidence_min is not None:
+        if confidence_min:
             query = query.filter(Prediction.confidence_score >= confidence_min)
-        if confidence_max is not None:
+        if confidence_max:
             query = query.filter(Prediction.confidence_score <= confidence_max)
         if start_date:
             query = query.filter(Prediction.prediction_timestamp >= start_date)

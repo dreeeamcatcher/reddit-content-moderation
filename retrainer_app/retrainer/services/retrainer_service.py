@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from math import log
 from typing import List, Optional
 import mlflow
 import logging
@@ -17,7 +18,7 @@ from retrainer_app.retrainer.utils.reddit_post_dataset import RedditPostDataset
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout)
     ]
@@ -37,14 +38,17 @@ class RetrainerService:
 
     def get_current_date_original_posts(self):
         today = datetime.now().date()
+        logger.info(f"Fetching original posts for date: {today}")
         return self.fetcher_repository.get_posts_for_n_days(start_date=today, n_days=1)
 
     def get_current_date_labelled_posts(self):
         today = datetime.now().date()
         return self.labelled_post_content_repository.get_labelled_posts_for_n_days(start_date=today, n_days=1)
 
-    def get_labelled_posts(self, start_date: Optional[datetime], end_date: Optional[datetime]) -> List[LabelledPostContent]:
-        return self.labelled_post_content_repository.get_labelled_posts_by_date_range(start_date, end_date)
+    def get_labelled_posts(self, start_date: Optional[str], end_date: Optional[str]) -> List[LabelledPostContent]:
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d") if start_date else None
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
+        return self.labelled_post_content_repository.get_labelled_posts_by_date_range(start_date_obj, end_date_obj)
 
     def get_all_labelled_posts(self) -> List[LabelledPostContent]:
         return self.labelled_post_content_repository.get_all()

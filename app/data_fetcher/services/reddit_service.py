@@ -9,7 +9,7 @@ from app.core.config import settings
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout)
     ]
@@ -78,3 +78,9 @@ class RedditService:
 
     def mark_post_as_processed(self, post_id: str):
         return self.repository.mark_post_as_processed(post_id)
+
+    def get_filtered_posts(self, processed_status, start_date=None, end_date=None) -> List[RedditPostCreate]:
+        logger.info(f"Fetching posts with processed status: {processed_status}, start date: {start_date}, end date: {end_date}")
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d") if start_date else None
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
+        return self.repository.get_filtered_posts(processed_status, start_date=start_date_obj, end_date=end_date_obj)

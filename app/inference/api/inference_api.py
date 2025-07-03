@@ -1,9 +1,9 @@
+import sys
 from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse 
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from datetime import datetime
 import logging
 
 from app.data_fetcher.api.data_fetcher_api import get_reddit_service
@@ -14,6 +14,13 @@ from app.inference.repositories.prediction_repository import PredictionRepositor
 from app.core.db import get_db
 
 router = APIRouter()
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 logger = logging.getLogger(__name__)
 
 templates = Jinja2Templates(directory="app/inference/templates")
@@ -66,40 +73,28 @@ async def view_predictions_ui(
     confidence_max: Optional[float] = Query(None),
     start_date: Optional[str] = Query(None),
     end_date: Optional[str] = Query(None),
-    repo: PredictionRepository = Depends(get_prediction_repository)
+    service: InferenceService = Depends(get_inference_service),
 ):
     """
     UI endpoint to view predictions with filtering.
     """
-    logger.info(
-        f"UI request to view predictions with filters: label='{label_filter}', "
-        f"confidence_min={confidence_min}, confidence_max={confidence_max}, "
-        f"start_date={start_date}, end_date={end_date}"
+
+    preidctions = service.get_filtered_predictions(
+        label=label_filter,
+        confidence_min=confidence_min,
+        confidence_max=confidence_max,
+        start_date=start_date,
+        end_date=end_date
     )
-    try:
-        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d") if start_date else None
-        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d") if end_date else None
-
-        predictions = repo.get_predictions_with_filters(
-            label=label_filter,
-            confidence_min=confidence_min,
-            confidence_max=confidence_max,
-            start_date=start_date_obj,
-            end_date=end_date_obj
-        )
-        return templates.TemplateResponse(
-            "predictions_view.html",
-            {
-                "request": request,
-                "predictions": predictions,
-                "label_filter": label_filter,
-                "confidence_min": confidence_min,
-                "confidence_max": confidence_max,
-                "start_date": start_date,
-                "end_date": end_date
-            }
-        )
-    except Exception as e:
-        logger.error(f"Error generating predictions view: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Error generating predictions view: {str(e)}")
-
+    return templates.TemplateResponse(
+        "predictions_view.html",
+        {
+            "request": request,
+            "predictions": preidctions,
+            "label_filter": label_filter,
+            "confidence_min": confidence_min,
+            "confidence_max": confidence_max,
+            "start_date": start_date,
+            "end_date": end_date
+        }
+    )
