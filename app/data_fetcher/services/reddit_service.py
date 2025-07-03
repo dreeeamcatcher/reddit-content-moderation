@@ -1,9 +1,20 @@
+import logging
+import sys
 import praw
 from typing import List
 from datetime import datetime
 from app.data_fetcher.repositories.reddit_post import RedditPostRepository
 from app.data_fetcher.schemas.reddit_post import RedditPostCreate
 from app.core.config import settings
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
 
 class RedditService:
     def __init__(self, repository: RedditPostRepository, reddit_client: praw.Reddit):
@@ -51,10 +62,12 @@ class RedditService:
 
     async def fetch_predefined_subreddits_posts(self) -> List[RedditPostCreate]:
         """Fetches posts from a predefined list of subreddits specified in config."""
+        logger.info(f"Fetching posts from predefined subreddits")
         all_fetched_posts = []
         for subreddit_name in settings.SUBREDDITS_TO_FETCH:
             fetched_posts = await self.fetch_subreddit_posts(subreddit_name, settings.POST_FETCH_LIMIT)
             all_fetched_posts.extend(fetched_posts)
+        logger.info(f"Fetched {len(all_fetched_posts)} posts from predefined subreddits")
         return all_fetched_posts
 
     def get_all_posts(self):

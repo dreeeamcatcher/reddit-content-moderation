@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import sys
 import httpx
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
@@ -17,7 +18,13 @@ from app.inference.repositories.prediction_repository import PredictionRepositor
 from app.inference.schemas.prediction import PredictionCreate, Prediction as PredictionSchema
 from app.core.config import settings
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 logger = logging.getLogger(__name__)
 
 class InferenceService:

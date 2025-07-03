@@ -1,3 +1,4 @@
+import sys
 from sqlalchemy.orm import Session
 from datetime import date
 import logging
@@ -6,7 +7,13 @@ from retrainer_app.core.config import settings
 from retrainer_app.monitor.repositories.prediction_repository import PredictionRepository
 from retrainer_app.monitor.schemas.monitor import MonitorResponse
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 logger = logging.getLogger(__name__)
 
 class MonitorService:
