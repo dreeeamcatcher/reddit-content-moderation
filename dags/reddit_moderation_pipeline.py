@@ -15,7 +15,7 @@ def check_retraining_trigger(ti):
 
 with DAG(
     dag_id="reddit_content_moderation_pipeline",
-    start_date=pendulum.datetime(2025, 6, 29, tz="UTC"),
+    start_date=pendulum.datetime(2025, 6, 29, tz="Europe/Kyiv"),
     catchup=False,
     schedule="0 */12 * * *",
     tags=["reddit", "moderation"],
