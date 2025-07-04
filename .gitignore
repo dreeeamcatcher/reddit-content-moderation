@@ -1,6 +1,10 @@
 .github
 .env
 .DS_Store
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
 
 logs
 mlartifacts
