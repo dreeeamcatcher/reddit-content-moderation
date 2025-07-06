@@ -25,12 +25,12 @@ class MonitorService:
         today = date.today()
         logger.info(f"Checking predictions for {today}")
 
-        hate_speech_predictions = self.prediction_repository.get_hate_speech_predictions_for_n_days(start_date=today, n_days=1)
+        predictions = self.prediction_repository.get_predictions_for_n_days(start_date=today, n_days=1)
 
-        total_hate_speech_predictions = len(hate_speech_predictions)
-        if total_hate_speech_predictions == 0:
+        total_predictions = len(predictions)
+        if total_predictions == 0:
             return MonitorResponse(
-                message="No hate speech predictions found for today.",
+                message="No predictions found for today.",
                 low_confidence_count=0,
                 total_hate_speech_predictions=0,
                 low_confidence_percentage=0.0,
@@ -38,10 +38,10 @@ class MonitorService:
             )
 
         low_confidence_count = sum(
-            1 for p in hate_speech_predictions if p.confidence_score < settings.MONITOR_LOW_CONFIDENCE_THRESHOLD
+            1 for p in predictions if p.confidence_score < settings.MONITOR_LOW_CONFIDENCE_THRESHOLD
         )
 
-        low_confidence_percentage = (low_confidence_count / total_hate_speech_predictions)
+        low_confidence_percentage = (low_confidence_count / total_predictions)
 
         retraining_triggered = low_confidence_percentage > settings.MONITOR_TRIGGER_THRESHOLD
 
@@ -56,7 +56,7 @@ class MonitorService:
         return MonitorResponse(
             message=message,
             low_confidence_count=low_confidence_count,
-            total_hate_speech_predictions=total_hate_speech_predictions,
+            total_hate_speech_predictions=total_predictions,
             low_confidence_percentage=low_confidence_percentage,
             retraining_triggered=retraining_triggered
         )
