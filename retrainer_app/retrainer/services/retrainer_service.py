@@ -66,7 +66,8 @@ class RetrainerService:
         for post in posts:
             # Label post text if not already labelled
             if post.post_id not in existing_post_ids:
-                post_label = self.call_llm(post.text)
+                main_text = f"{post.title or ''} -- {post.text or ''}"
+                post_label = self.call_llm(main_text)
                 labelled_post_to_create = LabelledPostContentCreate(
                     post_id=post.post_id,
                     text=post.text,

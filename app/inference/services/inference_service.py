@@ -122,14 +122,15 @@ class InferenceService:
             logger.info(f"Processing post ID: {post_schema.post_id}")
             
             # Classify post text
-            if post_schema.text:
-                classification_result = self._classify_text(post_schema.text)
+            if post_schema.text or post_schema.title:  # Ensure there's text to classify
+                main_text = f"{post_schema.title or ''} -- {post_schema.text or ''}"
+                classification_result = self._classify_text(main_text)
                 if "error" not in classification_result:
                     prediction_data = PredictionCreate(
                         post_id=post_schema.post_id,
                         comment_id=None, # For the main post text
                         text_type='post',
-                        original_text=post_schema.text,
+                        original_text=main_text,
                         label=classification_result['label'],
                         confidence_score=classification_result['confidence_score'],
                         model_version=self.model_version,
