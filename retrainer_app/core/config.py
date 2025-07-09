@@ -32,10 +32,12 @@ class Settings(BaseSettings):
 
     # --- MLflow Settings ---
     MLFLOW_TRACKING_URI: str = "http://mlflow:5000"
+    MLFLOW_S3_ENDPOINT_URL: Optional[str] = None
+    AWS_ACCESS_KEY_ID: Optional[str] = None
+    AWS_SECRET_ACCESS_KEY: Optional[str] = None
 
 
     # --- Inference Service Settings ---
-    MLFLOW_MODEL_CHAMPION_URI: str = ""
     MLFLOW_MODEL_NAME: str = ""
     MLFLOW_CHAMPION_ALIAS: str = ""
 

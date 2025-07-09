@@ -19,9 +19,13 @@ async def lifespan(app: FastAPI):
 
     mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
     
+    # Construct the model URI dynamically from the model name and alias
+    model_uri = f"models:/{settings.MLFLOW_MODEL_NAME}@{settings.MLFLOW_CHAMPION_ALIAS}"
+    print(f"Loading model from URI: {model_uri}")
+
     # Load model components
     model_components = mlflow.transformers.load_model(
-        model_uri=settings.MLFLOW_MODEL_CHAMPION_URI,
+        model_uri=model_uri,
         return_type="components"
     )
     print("Model and tokenizer loaded from MLflow.")

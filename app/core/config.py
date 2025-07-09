@@ -36,13 +36,15 @@ class Settings(BaseSettings):
 
     # --- MLflow Settings ---
     MLFLOW_TRACKING_URI: str = "http://mlflow:5000"
+    MLFLOW_S3_ENDPOINT_URL: Optional[str] = None
+    AWS_ACCESS_KEY_ID: Optional[str] = None
+    AWS_SECRET_ACCESS_KEY: Optional[str] = None
 
     # --- Application Behavior Settings ---
     SUBREDDITS_TO_FETCH: List[str] = ["politics", "worldnews", "changemyview", 'unpopularopinion', 'Debate', 'TrueUnpopularOpinion', 'PoliticalDiscussion']
     POST_FETCH_LIMIT: int = 10
 
     # --- Inference Service Settings ---
-    MLFLOW_MODEL_CHAMPION_URI: str = ""
     MLFLOW_MODEL_NAME: str = ""
     MLFLOW_CHAMPION_ALIAS: str = ""
 
