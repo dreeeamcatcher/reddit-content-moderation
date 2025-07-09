@@ -1,0 +1,7 @@
+sqlalchemy
+psycopg2-binary
+boto3
+pydantic
+google-genai
+python-dotenv
+exceptiongroup
