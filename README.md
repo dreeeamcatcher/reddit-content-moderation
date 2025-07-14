@@ -35,8 +35,8 @@ The system follows a continuous machine learning pipeline:
     *   (10) Stores newly labeled data in the database.
     *   (11) Fine-tunes the current "champion" model from the MLFlow production stage.
     *   If no champion model is available, it downloads the initial base model for fine-tuning.
-9.  **Model Registry**: Stores the newly trained model artifact in MLFlow, versioning it for production use.
-10. **Model Deployment**: (12) The Retraining Orchestrator updates the Inference Service to use the new model from the Model Registry.
+* **Model Registry**: Stores the newly trained model artifact in MLFlow, versioning it for production use.
+* **Model Deployment**: (12) The Retraining Orchestrator updates the Inference Service to use the new model from the Model Registry.
 
 ## Architecture and Technologies
 
