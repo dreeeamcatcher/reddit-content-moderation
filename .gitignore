@@ -8,3 +8,6 @@ __pycache__/
 
 logs
 mlartifacts
+sagemaker
+k8s
+manifests

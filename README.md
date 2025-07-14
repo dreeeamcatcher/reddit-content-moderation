@@ -2,26 +2,41 @@
 
 This project is a full-cycle MLOps implementation for an Automated Reddit Content Moderation System. It's designed as a university project to practice and demonstrate a complete MLOps pipeline, from data ingestion and model training to deployment, monitoring, and automated retraining.
 
+## Table of Contents
+
+- [Automated Reddit Content Moderation System](#automated-reddit-content-moderation-system)
+  - [Project Pipeline](#project-pipeline)
+  - [Architecture and Technologies](#architecture-and-technologies)
+  - [Reddit API Integration](#reddit-api-integration)
+  - [Initial Model](#initial-model)
+  - [Project Structure](#project-structure)
+  - [How to Run](#how-to-run)
+    - [Prerequisites](#prerequisites)
+    - [1. Environment Setup](#1-environment-setup)
+    - [2. Build and Run the System](#2-build-and-run-the-system)
+    - [3. Initial Model Registration](#3-initial-model-registration)
+    - [4. Accessing Services](#4-accessing-services)
+
 ## Project Pipeline
+
+![Project Pipeline](img/pipeline.png)
 
 The system follows a continuous machine learning pipeline:
 
-1.  **Data Fetcher Service**: Periodically queries the Reddit API for new posts in specified subreddits. This is orchestrated by an **Airflow DAG**.
-2.  **Data Storage (Raw Posts)**: Stores raw post data (ID, text, timestamp) in a PostgreSQL database.
-3.  **Inference Service**: Loads the current production ML model from the Model Registry (MLFlow). It fetches raw data, performs classification, and outputs predictions with confidence scores.
-4.  **Log Storage (Predictions)**: Stores prediction results in the PostgreSQL database.
-5.  **Monitoring Service**: Periodically queries the prediction logs to analyze prediction distributions and confidence levels, comparing them against predefined baselines or thresholds. This is orchestrated by an **Airflow DAG**.
-6.  **Automated Retraining Trigger**: If model drift or performance degradation is detected, the Monitoring Service notifies the Retraining Orchestrator.
-7.  **Retraining Orchestrator**:
-    *   Fetches a recent batch of raw data.
-    *   (Concept) Sends data to an LLM Labeling Service for annotation.
-    *   Stores newly labeled data in the database.
-    *   Triggers the Model Training Service with the new data.
-8.  **Model Training Service**:
-    *   Fine-tunes the current "champion" model from the MLFlow production stage.
+*  **Data Fetcher Service**: (1) Periodically queries the Reddit API for new posts in specified subreddits. This is orchestrated by an **Airflow DAG**.
+*  **Data Storage (Raw Posts)**: (2) Stores raw post data (ID, text, timestamp) in a PostgreSQL database.
+*  **Inference Service**: (3) Loads the current production ML model from the Model Registry (MLFlow). (4) It fetches raw data, performs classification, and (5) outputs predictions with confidence scores.
+*  **Log Storage (Predictions)**: Stores prediction results in the PostgreSQL database.
+*  **Monitoring Service**: (6) Periodically queries the prediction logs to analyze prediction distributions and confidence levels, comparing them against predefined baselines or thresholds. This is orchestrated by an **Airflow DAG**.
+*  **Automated Retraining Trigger**: If model drift or performance degradation is detected, (7) the Monitoring Service notifies the Retraining Orchestrator.
+*  **Retraining Orchestrator**:
+    *   (8) Fetches a recent batch of raw data.
+    *   (9) Sends data to an LLM Labeling Service for annotation.
+    *   (10) Stores newly labeled data in the database.
+    *   (11) Fine-tunes the current "champion" model from the MLFlow production stage.
     *   If no champion model is available, it downloads the initial base model for fine-tuning.
 9.  **Model Registry**: Stores the newly trained model artifact in MLFlow, versioning it for production use.
-10. **Model Deployment**: The Retraining Orchestrator updates the Inference Service to use the new model from the Model Registry.
+10. **Model Deployment**: (12) The Retraining Orchestrator updates the Inference Service to use the new model from the Model Registry.
 
 ## Architecture and Technologies
 
